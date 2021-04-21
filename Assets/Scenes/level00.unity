@@ -762,6 +762,7 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+<<<<<<< HEAD
 --- !u!1 &278448898
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,6 +872,8 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 5, y: 5}
   m_EdgeRadius: 0
+=======
+>>>>>>> 679c9d49f2d233cee16fc57b1f2fa0f6c2656577
 --- !u!1 &497537439
 GameObject:
   m_ObjectHideFlags: 0
@@ -1262,6 +1265,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!1 &1519902672
 GameObject:
   m_ObjectHideFlags: 0
@@ -1384,6 +1388,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f954abdb2bf74d49a42b045e33dfc81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+=======
+>>>>>>> 679c9d49f2d233cee16fc57b1f2fa0f6c2656577
 --- !u!1 &1764775832
 GameObject:
   m_ObjectHideFlags: 0
