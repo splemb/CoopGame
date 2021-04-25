@@ -17,11 +17,14 @@ public class PlayerController : MonoBehaviour
 
     public float moveAxis = 0f;
 
+    Vector3 startPos;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         sprite = GetComponentInChildren<SpriteRenderer>();
+        startPos = transform.position;
     }
 
     // Update is called once per frame
@@ -95,6 +98,8 @@ public class PlayerController : MonoBehaviour
         }
 
         rb.AddForce(new Vector2((moveAxis * speed) - rb.velocity.x, 0), ForceMode2D.Impulse);
+
+        if (transform.position.y < GameObject.Find("DeathPlane").transform.position.y) transform.position = startPos;
     }
 
     private void checkCanJump()
@@ -114,12 +119,35 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private bool isGrounded()
+    bool isGrounded()
     {
         // Cast a box straight down
         RaycastHit2D hit = Physics2D.BoxCast(transform.position, new Vector2(4f, 0.1f), 0f, -Vector2.up, 2f, Ground);
 
         // Return if it hits the ground
         return (hit.collider != null);
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "RedEnemy":
+                if (transform.position.y > collision.transform.position.y && tag == "Player1")
+                {
+                    Destroy(collision.gameObject);
+                    rb.velocity = new Vector2(rb.velocity.x, 30f);
+                }
+                else transform.position = startPos;
+                break;
+            case "GreenEnemy":
+                if (transform.position.y > collision.transform.position.y && tag == "Player2")
+                {
+                    Destroy(collision.gameObject);
+                    rb.velocity = new Vector2(rb.velocity.x, 30f);
+                }
+                else transform.position = startPos;
+                break;
+        }
     }
 }
