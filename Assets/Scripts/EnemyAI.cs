@@ -4,168 +4,53 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField]
-    Transform player;
-    [SerializeField]
-    float agroRange;
-    [SerializeField]
-    float moveSpeed;
-    [SerializeField]
-    Transform castPoint;
-    public float distence;
-    private bool movingRight = true;
-    bool movingLeft = false;
-    bool isAgro = false;
-    float timer = 1f;
-    public Transform groundDetection;
+    [SerializeField] float aggroRange;
+    [SerializeField] float moveSpeed;
+    [SerializeField] LayerMask Ground;
+    [SerializeField] LayerMask PlayerCast;
 
+    Transform player;
     Rigidbody2D rb;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.velocity = Vector2.right * moveSpeed * Time.deltaTime * 60f;
+
+        //Get correct target player
+        switch (tag)
+        {
+            case "RedEnemy":
+                player = GameObject.FindGameObjectWithTag("Player1").transform;
+                break;
+            case "GreenEnemy":
+                player = GameObject.FindGameObjectWithTag("Player2").transform;
+                break;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        // distence to player
-        float distToPlayer = Vector2.Distance(transform.position, player.position);
-        //Debug.Log("Distence to player: " + distToPlayer); 
-
-        float castDist = distence;
-        if (movingLeft == true)
+        if (CanSeePlayer())
         {
-            castDist = -distence;
+            if (transform.position.x < player.position.x) transform.localScale = new Vector3(1, transform.localScale.y, transform.localScale.z);
+            else transform.localScale = new Vector3(-1, transform.localScale.y, transform.localScale.z);
+            rb.velocity = Vector3.right * moveSpeed * transform.localScale.x;
         }
-        if (CanSeePlayer(agroRange))
+        else if (Mathf.Abs(rb.velocity.x) < 0.2f) //Swap direction after hitting an obstacle
         {
-            isAgro = true;
-        }
-        else if (isAgro == false)
-        {
-            StopChasing();
-        }
-        if (isAgro)
-        {
-            ChasePlayer();
-        }
-
-    }
-
-    void ChasePlayer()
-    {
-        transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
-        RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, 1);
-        if (groundInfo.collider == true) // stop enemy going over edge if player jumps across ledge
-        {
-            if (transform.position.x < player.position.x) // enemy is on left of player so move right
-            {
-                transform.eulerAngles = new Vector3(0, 0, 0);
-                movingLeft = false;
-            }
-            else // enemy is right side of the player move left
-            {
-                transform.eulerAngles = new Vector3(0, -180, 0);
-                movingLeft = true;
-            }
-        }
-        else
-        {
-            isAgro = false;
+            transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            rb.velocity = Vector3.right * moveSpeed * transform.localScale.x;
         }
     }
 
-    void StopChasing()
+    bool CanSeePlayer()
     {
-        isAgro = false;
-        transform.Translate(Vector2.right * moveSpeed * Time.deltaTime); // move right
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, player.position - transform.position, aggroRange, PlayerCast);
+        if (hit && hit.collider.tag == player.tag) return true;
+        return false;
 
-        RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, 1); // shoot raycast down to detect ground
-        if (groundInfo.collider == false) // if the cast does not detect ground turn in opposite direction
-        {
-            if (movingRight == true)
-            {
-                transform.eulerAngles = new Vector3(0, -180, 0);
-                movingRight = false;
-                movingLeft = true;
-            }
-            else
-            {
-                transform.eulerAngles = new Vector3(0, 0, 0);
-                movingRight = true;
-                movingLeft = false;
-            }
-        }
-    }
-
-    bool CanSeePlayer(float distence)
-    {
-        bool canSee = false;
-        float castDist = distence;
-        if (movingLeft == true)
-        {
-            castDist = -distence;
-        }
-
-        Vector2 endPos = castPoint.position + Vector3.right * castDist;
-        RaycastHit2D hitInfo = Physics2D.Linecast(castPoint.position, endPos, 1 << LayerMask.NameToLayer("Player"));
-
-        if (hitInfo.collider != null)
-        {
-            if (hitInfo.collider.gameObject.CompareTag("Player1"))
-            {
-                canSee = true;
-            }
-            else
-            {
-                canSee = false;
-            }
-            Debug.DrawLine(castPoint.position, hitInfo.point, Color.red);
-        }
-        else
-        {
-            Debug.DrawLine(castPoint.position, endPos, Color.blue);
-        }
-        return canSee;
-    }
-    void OnTriggerEnter2D(Collider2D hitInfo)
-    {
-        Debug.Log(hitInfo.name);
-        if (hitInfo.tag == "Spikes") // if the hit object is an object which can be destoryed by spell destory it
-        {
-            isAgro = false;
-            if (movingRight == true)
-            {
-
-                transform.eulerAngles = new Vector3(0, -180, 0);
-                movingRight = false;
-                movingLeft = true;
-            }
-            else
-            {
-                transform.eulerAngles = new Vector3(0, 0, 0);
-                movingRight = true;
-                movingLeft = false;
-            }
-        }
-        else if (hitInfo.tag == "Nails") // if the hit object is an object which can be destoryed by spell destory it
-        {
-            isAgro = false;
-            if (movingRight == true)
-            {
-                transform.eulerAngles = new Vector3(0, -180, 0);
-                movingRight = false;
-                movingLeft = true;
-            }
-            else
-            {
-                transform.eulerAngles = new Vector3(0, 0, 0);
-                movingRight = true;
-                movingLeft = false;
-            }
-        }
     }
 }
