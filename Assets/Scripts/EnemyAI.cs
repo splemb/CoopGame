@@ -51,5 +51,6 @@ public class EnemyAI : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(transform.position, player.position - transform.position, aggroRange, PlayerCast);
         if (hit && hit.collider.tag == player.tag) return true;
         return false;
+
     }
 }
