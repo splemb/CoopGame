@@ -70,7 +70,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -351351725
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: cefbfc8a6da1f1444bf3357f1811ec1a, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 1
@@ -166,12 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ca0d484559f4544aca4624f17f193f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
   aggroRange: 10
   moveSpeed: 30
-  castPoint: {fileID: 0}
-  distance: 0
-  groundDetection: {fileID: 0}
   Ground:
     serializedVersion: 2
     m_Bits: 256
